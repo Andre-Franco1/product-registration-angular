@@ -14,25 +14,37 @@ import { ProductService } from '../../services/product';
 })
 export class ProductsComponent {
 
-  categories : Category [] = [];
-  product : Product = {} as Product;
-  products : Product[] = [];
+  categories: Category[] = [];
+  products: Product[] = [];
+  product: Product = {} as Product;
+
 
   constructor(private categoryService: CategoryService, private productService: ProductService) { }
 
-  ngOnInit(): void{
+  ngOnInit(): void {
 
     this.categoryService.getCategories().subscribe(
       {
-        next: data => {this.categories = data}
+        next: data => { this.categories = data }
       }
     );
 
-    this.products = this.productService.getProducts();
+    this.productService.getProducts().subscribe(
+      {
+        next: data => { this.products = data }
+      }
+    );
   }
 
-  saveProduct(product: Product){
-    this.productService.saveProduct(product);
-    product = {} as Product;
+  //this solution works for only 1 user (lower complexity)
+  saveProduct(product: Product) {
+    this.productService.saveProduct(product).subscribe(
+      {
+        next: data => {
+          this.products.push(data);
+          this.product = {} as Product;
+        } 
+      }
+    )
   }
 }
