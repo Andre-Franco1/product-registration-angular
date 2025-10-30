@@ -1,0 +1,40 @@
+<div class="container mt-3">
+    <app-product [categories]="categories" [product]="product" (saveEmitter)="saveProduct(product)"></app-product>
+    <div class="display-6">
+        Registered Products:
+    </div>
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <table class="table" id="productsTable">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col" class="d-none d-md-table-cell">Description</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Category</th>
+                        <th scope="col" class="d-none d-md-table-cell">Options</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (product of products; track product.id){
+                    <tr>
+                        <td>{{product.id}}</td>
+                        <td>{{product.name}}</td>
+                        <td>{{product.description}}</td>
+                        <td>{{product.price | currency: 'BRL' }}</td>
+                        <td>{{product.category.name}}</td>
+                        <td>
+                            @if (product.promotion){
+                                <span class="badge bg-success text-white me-1">Promo</span>
+                            }
+                            @if (product.newProduct){
+                                <span class="badge bg-primary text-white">New</span>
+                            }
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
