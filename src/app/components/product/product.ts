@@ -1,27 +1,50 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { Category } from '../../interfaces/Category';
 import { Product } from '../../interfaces/Product';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-product',
-  imports: [FormsModule],
+  imports: [FormsModule, ReactiveFormsModule],
   templateUrl: './product.html',
   styleUrl: './product.css',
 })
-export class ProductComponent {
+export class ProductComponent implements OnChanges {
 
   @Input()
   categories : Category [] = [];
 
   @Input()
-  product ?: Product;
+  product : Product = {} as Product;
 
   @Output()
   saveEmitter = new EventEmitter();
 
+  formGroupProduct: FormGroup;
+
+  constructor(private formBuilder: FormBuilder){
+    this.formGroupProduct = this.formBuilder.group({
+      id : {value:null, disabled:true},
+      name : ['', [Validators.required, Validators.minLength(3)]],
+      description : ['', [Validators.required]],
+      category : ['', [Validators.required]],
+      price : ['', [Validators.required]],
+      newProduct : [''],
+      promotion : ['']
+    })
+  }
+
+  ngOnChanges(): void {
+    if(this.product.id){
+      this.formGroupProduct.setValue(this.product);
+    }
+  }
+
   save(){
-    this.saveEmitter.emit(true);
+    if(this.formGroupProduct.valid){
+      Object.assign(this.product, this.formGroupProduct.value)
+      this.saveEmitter.emit(true);
+    }
   }
 
   cancel(){
@@ -31,5 +54,11 @@ export class ProductComponent {
   selectedCategory(category1:Category, category2:Category){
     return category1 && category2 ? category1.id == category2.id : false;
   }
+
+  get pfgName() {return this.formGroupProduct.get("name")}
+  get pfgDescription() {return this.formGroupProduct.get("description")}
+  get pfgCategory() {return this.formGroupProduct.get("category")}
+  get pfgPrice() {return this.formGroupProduct.get("price")}
+
 
 }
