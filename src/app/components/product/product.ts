@@ -21,6 +21,15 @@ export class ProductComponent {
   saveEmitter = new EventEmitter();
 
   save(){
-    this.saveEmitter.emit();
+    this.saveEmitter.emit(true);
   }
+
+  cancel(){
+    this.saveEmitter.emit(false);
+  }
+
+  selectedCategory(category1:Category, category2:Category){
+    return category1 && category2 ? category1.id == category2.id : false;
+  }
+
 }
